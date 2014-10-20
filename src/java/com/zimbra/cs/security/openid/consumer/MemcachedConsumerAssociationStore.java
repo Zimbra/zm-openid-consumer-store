@@ -2,11 +2,11 @@
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Server
  * Copyright (C) 2011, 2013, 2014 Zimbra, Inc.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software Foundation,
  * version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
@@ -16,17 +16,18 @@
  */
 package com.zimbra.cs.security.openid.consumer;
 
-import com.zimbra.common.util.Log;
-import com.zimbra.common.util.ZimbraLog;
-import com.zimbra.common.util.memcached.ZimbraMemcachedClient;
-import com.zimbra.cs.memcached.MemcachedConnector;
-import org.openid4java.association.Association;
-import org.openid4java.consumer.ConsumerAssociationStore;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.openid4java.association.Association;
+import org.openid4java.consumer.ConsumerAssociationStore;
+
+import com.zimbra.common.util.Log;
+import com.zimbra.common.util.ZimbraLog;
+import com.zimbra.common.util.memcached.ZimbraMemcachedClient;
+import com.zimbra.cs.util.Zimbra;
 
 /**
  */
@@ -36,7 +37,7 @@ public class MemcachedConsumerAssociationStore implements ConsumerAssociationSto
     private static Log logger = ZimbraLog.extensions;
     private static final boolean debug = logger.isDebugEnabled();
 
-    private static ZimbraMemcachedClient memcachedClient = MemcachedConnector.getClient();
+    private ZimbraMemcachedClient memcachedClient = Zimbra.getAppContext().getBean(ZimbraMemcachedClient.class);
 
     @Override
     public synchronized void save(String opUrl, Association association) {
