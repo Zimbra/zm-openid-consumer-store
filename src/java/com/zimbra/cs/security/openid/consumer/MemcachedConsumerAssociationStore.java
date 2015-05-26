@@ -24,6 +24,7 @@ import java.util.Set;
 import org.openid4java.association.Association;
 import org.openid4java.consumer.ConsumerAssociationStore;
 
+import com.zimbra.common.service.ServiceException;
 import com.zimbra.common.util.Log;
 import com.zimbra.common.util.ZimbraLog;
 import com.zimbra.common.util.memcached.ZimbraMemcachedClient;
@@ -41,37 +42,49 @@ public class MemcachedConsumerAssociationStore implements ConsumerAssociationSto
 
     @Override
     public synchronized void save(String opUrl, Association association) {
-        @SuppressWarnings("unchecked")
-        Map<String, Association> handleMap = (Map<String, Association>) memcachedClient.get(getKey(opUrl));
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Association> handleMap = (Map<String, Association>) memcachedClient.get(getKey(opUrl));
 
-        if (handleMap == null)
-            handleMap = new HashMap<String, Association>();
-        else
-            removeExpired(handleMap);
+            if (handleMap == null)
+                handleMap = new HashMap<String, Association>();
+            else
+                removeExpired(handleMap);
 
-        String handle = association.getHandle();
-        if (debug)
-            logger.debug("Adding association: " + handle + " with OP: " + opUrl);
-        handleMap.put(association.getHandle(), association);
-        memcachedClient.put(getKey(opUrl), handleMap, true);
+            String handle = association.getHandle();
+            if (debug)
+                logger.debug("Adding association: " + handle + " with OP: " + opUrl);
+            handleMap.put(association.getHandle(), association);
+            memcachedClient.put(getKey(opUrl), handleMap, true);
+        } catch (ServiceException e) {
+            ZimbraLog.misc.warn(e.getLocalizedMessage(), e);
+        }
     }
 
     @Override
     public synchronized Association load(String opUrl, String handle) {
-        @SuppressWarnings("unchecked")
-        Map<String, Association> handleMap = (Map<String, Association>) memcachedClient.get(getKey(opUrl));
-
-        if (handleMap != null) {
-            removeExpired(handleMap);
-            return handleMap.get(handle);
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Association> handleMap = (Map<String, Association>) memcachedClient.get(getKey(opUrl));
+            if (handleMap != null) {
+                removeExpired(handleMap);
+                return handleMap.get(handle);
+            }
+        } catch (ServiceException e) {
+            ZimbraLog.misc.warn(e.getLocalizedMessage(), e);
         }
         return null;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public synchronized Association load(String opUrl) {
-        @SuppressWarnings("unchecked")
-        Map<String, Association> handleMap = (Map<String, Association>) memcachedClient.get(getKey(opUrl));
+        Map<String, Association> handleMap = null;
+        try {
+            handleMap = (Map<String, Association>) memcachedClient.get(getKey(opUrl));
+        } catch (ServiceException e) {
+            ZimbraLog.misc.warn(e.getLocalizedMessage(), e);
+        }
 
         Association latest = null;
         if (handleMap != null) {
@@ -86,15 +99,24 @@ public class MemcachedConsumerAssociationStore implements ConsumerAssociationSto
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public synchronized void remove(String opUrl, String handle) {
-        @SuppressWarnings("unchecked")
-        Map<String, Association> handleMap = (Map<String, Association>) memcachedClient.get(getKey(opUrl));
+        Map<String, Association> handleMap = null;
+        try {
+            handleMap = (Map<String, Association>) memcachedClient.get(getKey(opUrl));
+        } catch (ServiceException e) {
+            ZimbraLog.misc.warn(e.getLocalizedMessage(), e);
+        }
 
         if (handleMap != null) {
             removeExpired(handleMap);
             logger.debug("Removing association: " + handle + " widh OP: " + opUrl);
             handleMap.remove(handle);
-            memcachedClient.put(getKey(opUrl), handleMap, true);
+            try {
+                memcachedClient.put(getKey(opUrl), handleMap, true);
+            } catch (ServiceException e) {
+                ZimbraLog.misc.warn(e.getLocalizedMessage(), e);
+            }
         }
     }
 

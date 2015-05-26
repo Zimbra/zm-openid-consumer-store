@@ -20,6 +20,8 @@ import java.util.Date;
 
 import org.openid4java.consumer.AbstractNonceVerifier;
 
+import com.zimbra.common.service.ServiceException;
+import com.zimbra.common.util.ZimbraLog;
 import com.zimbra.common.util.memcached.ZimbraMemcachedClient;
 import com.zimbra.cs.util.Zimbra;
 
@@ -42,9 +44,13 @@ public class MemcachedNonceVerifier extends AbstractNonceVerifier {
      */
     @Override
     protected int seen(Date now, String opUrl, String nonce) {
-        if (opUrl.equals(memcachedClient.get(KEY_PREFIX + nonce)))
-            return SEEN;
-        memcachedClient.put(KEY_PREFIX + nonce, opUrl, false);
+        try {
+            if (opUrl.equals(memcachedClient.get(KEY_PREFIX + nonce)))
+                return SEEN;
+            memcachedClient.put(KEY_PREFIX + nonce, opUrl, false);
+        } catch (ServiceException e) {
+            ZimbraLog.misc.warn(e.getLocalizedMessage(), e);
+        }
         return OK;
     }
 }
