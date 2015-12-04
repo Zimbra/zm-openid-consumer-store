@@ -23,7 +23,7 @@
 - If the zimbraOpenidConsumerStatelessModeEnabled server attribute is set to FALSE (TRUE by default), setup memcached
 
 
-- zmmaiboxdctl restart
+- zmmailboxdctl restart
 
 
 - To associate/link an "open id" with a user's account (to provision OpenID-based login in future) when the user is
