@@ -127,7 +127,7 @@
 	<classpathentry kind="lib" path="/ZimbraCommon/jars/zimbra-native.jar"/>
 	<classpathentry kind="lib" path="/ZimbraCommon/jars/zkclient-0.1.jar"/>
 	<classpathentry kind="lib" path="/ZimbraCommon/jars/zookeeper-3.4.5.jar"/>
-	<classpathentry kind="lib" path="jars/openid4java-0.9.5.jar"/>
+	<classpathentry kind="lib" path="jars/openid4java-1.0.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ZimbraCommon"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ZimbraServer"/>
 	<classpathentry kind="output" path="build/classes"/>
