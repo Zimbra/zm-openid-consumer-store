@@ -80,8 +80,8 @@ public class OpenIDConsumerHandler extends ExtensionHttpHandler {
                 // set nonce timestamp expiry to 5 min
                 manager.setNonceVerifier(new MemcachedNonceVerifier(300));
             }
-        } catch (ConsumerException e) {
-            ZimbraLog.extensions.error("OpenID error code %s", e.getErrorCode());
+        } catch (Exception e) {
+            ZimbraLog.extensions.error("OpenID error", e);
             throw ServiceException.FAILURE("Error in initializing OpenID ConsumerManager", e);
         }
     }
