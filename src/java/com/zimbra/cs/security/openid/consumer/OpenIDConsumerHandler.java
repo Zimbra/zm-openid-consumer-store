@@ -16,40 +16,6 @@
  */
 package com.zimbra.cs.security.openid.consumer;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.codec.binary.Base64;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.openid4java.OpenIDException;
-import org.openid4java.consumer.ConsumerException;
-import org.openid4java.consumer.ConsumerManager;
-import org.openid4java.consumer.VerificationResult;
-import org.openid4java.discovery.DiscoveryException;
-import org.openid4java.discovery.DiscoveryInformation;
-import org.openid4java.discovery.Identifier;
-import org.openid4java.discovery.UrlIdentifier;
-import org.openid4java.discovery.XriIdentifier;
-import org.openid4java.message.AuthRequest;
-import org.openid4java.message.ParameterList;
-import org.openid4java.util.HttpClientFactory;
-import org.openid4java.util.ProxyProperties;
-
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.common.util.ZimbraCookie;
 import com.zimbra.common.util.ZimbraLog;
@@ -63,6 +29,34 @@ import com.zimbra.cs.extension.ExtensionHttpHandler;
 import com.zimbra.cs.extension.ZimbraExtension;
 import com.zimbra.cs.service.AuthProvider;
 import com.zimbra.cs.servlet.ZimbraServlet;
+import org.apache.commons.codec.binary.Base64;
+import org.openid4java.OpenIDException;
+import org.openid4java.consumer.ConsumerException;
+import org.openid4java.consumer.ConsumerManager;
+import org.openid4java.consumer.VerificationResult;
+import org.openid4java.discovery.DiscoveryInformation;
+import org.openid4java.discovery.Identifier;
+import org.openid4java.message.AuthRequest;
+import org.openid4java.message.ParameterList;
+import org.openid4java.util.HttpClientFactory;
+import org.openid4java.util.ProxyProperties;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * OpenID Consumer HTTP Handler
@@ -94,15 +88,13 @@ public class OpenIDConsumerHandler extends ExtensionHttpHandler {
 
     private static void configureHttpProxy() throws ServiceException {
         String url = Provisioning.getInstance().getLocalServer().getAttr(Provisioning.A_zimbraHttpProxyURL, null);
-        if (url == null)
-            return;
+        if (url == null) return;
 
         ProxyProperties proxyProps = new ProxyProperties();
         URI sProxyUri;
         try {
             sProxyUri = new URI(url);
         } catch (URISyntaxException e) {
-            ZimbraLog.extensions.error(e.getMessage());
             throw ServiceException.FAILURE("invalid zimbraHttpProxyURL", e);
         }
         proxyProps.setProxyHostName(sProxyUri.getHost());
@@ -136,7 +128,8 @@ public class OpenIDConsumerHandler extends ExtensionHttpHandler {
         }
     }
 
-    private void processReturn(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void processReturn(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         VerificationResult verification;
         DiscoveryInformation discovered;
         try {
@@ -160,16 +153,14 @@ public class OpenIDConsumerHandler extends ExtensionHttpHandler {
             // verify the response
             verification = manager.verify(receivingURL.toString(), response, discovered);
         } catch (OpenIDException e) {
-            ZimbraLog.extensions.error("OpenID error code %s", e.getErrorCode(), e);
-            throw new ServletException(e.getMessage());
-        } catch (ServiceException e) {
+            ZimbraLog.extensions.info("OpenID error code %s", e.getErrorCode(), e);
             throw new ServletException(e.getMessage());
         }
 
         Identifier identifier = verification.getVerifiedId();
-        if (identifier == null) {
+        if (identifier == null)
             throw new ServletException("Authentication failed");
-        }
+
         ZimbraLog.extensions.debug("claimed identifier: %s", identifier);
         String openId = identifier.getIdentifier();
         try {
@@ -224,8 +215,7 @@ public class OpenIDConsumerHandler extends ExtensionHttpHandler {
             // perform discovery on the user-supplied identifier
             List discoveries = manager.discover(userSuppliedId);
 
-            // if nothing was discovered then assume userSuppliedId to be the OP
-            // endpoint URL
+            // if nothing was discovered then assume userSuppliedId to be the OP endpoint URL
             if (discoveries.isEmpty()) {
                 ZimbraLog.extensions.debug("No OP endpoints discovered");
                 try {
@@ -259,13 +249,11 @@ public class OpenIDConsumerHandler extends ExtensionHttpHandler {
                 // Option 2: HTML FORM Redirection (Allows payloads >2048 bytes)
                 req.setAttribute("message", authReq);
                 HttpServlet servlet = ZimbraServlet.getServlet("ExtensionDispatcherServlet");
-                servlet.getServletContext().getContext("/zimbra").getRequestDispatcher("/public/formredirection.jsp")
-                        .forward(req, resp);
+                servlet.getServletContext().getContext("/zimbra").
+                        getRequestDispatcher("/public/formredirection.jsp").forward(req, resp);
             }
         } catch (OpenIDException e) {
             ZimbraLog.extensions.debug("OpenID error code %s", e.getErrorCode(), e);
-            throw new ServletException(e.getMessage());
-        } catch (ServiceException e) {
             throw new ServletException(e.getMessage());
         }
     }
@@ -291,7 +279,7 @@ public class OpenIDConsumerHandler extends ExtensionHttpHandler {
     }
 
     private static String getCookieValue(HttpServletRequest req, String cookieName) {
-        Cookie cookies[] = req.getCookies();
+        Cookie cookies[] =  req.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(cookieName))
@@ -306,95 +294,22 @@ public class OpenIDConsumerHandler extends ExtensionHttpHandler {
         return "/openid/consumer";
     }
 
-    public static String serialize(DiscoveryInformation discInfo) throws IOException, ServiceException {
-        JSONObject jsonSerialized = new JSONObject();
-        try {
-            // serialize identifier into JSON
-            Identifier claimedID = discInfo.getClaimedIdentifier();
-            if (claimedID != null) {
-                String claimedIdentifierString = claimedID.getIdentifier();
-                if (claimedIdentifierString != null) {
-                    JSONObject claimedIDJSON = new JSONObject();
-                    claimedIDJSON.put("identifier", claimedIdentifierString);
-                    if (claimedID instanceof XriIdentifier) {
-                        // need identifier, iriNormalForm and uriNormalForm
-                        claimedIDJSON.put("idType", "XRI");
-                        claimedIDJSON.put("iriNormalForm", ((XriIdentifier) claimedID).toIRINormalForm());
-                        claimedIDJSON.put("uriNormalForm", ((XriIdentifier) claimedID).toURINormalForm());
-                    } else {
-                        // need only string value
-                        claimedIDJSON.put("idType", "URL");
-                    }
-                    jsonSerialized.put("claimedID", claimedIDJSON);
-                }
-            }
-            URL opEndpoint = discInfo.getOPEndpoint();
-            if (opEndpoint != null) {
-                jsonSerialized.put("opEndpoint", opEndpoint.toString());
-            }
-            jsonSerialized.put("hasDelegateIdentifier", discInfo.hasDelegateIdentifier());
-            if (discInfo.hasDelegateIdentifier()) {
-                jsonSerialized.put("delegateIdentifier", discInfo.getDelegateIdentifier());
-            }
-            jsonSerialized.put("version", discInfo.getVersion());
-            @SuppressWarnings("rawtypes")
-            Set discoveryTypes = discInfo.getTypes();
-            JSONArray discoveryTypesJSON = new JSONArray();
-            for (Object type : discoveryTypes) {
-                discoveryTypesJSON.put(type);
-            }
-            jsonSerialized.put("discoveryTypes", discoveryTypesJSON);
-            ZimbraLog.extensions.debug("Serialized open id %s", jsonSerialized.toString());
-        } catch (JSONException e) {
-            ZimbraLog.extensions.error("Failed to serialize DiscoveryInformation %s", e.getMessage(), e);
-            throw ServiceException.FAILURE(null, e);
-        }
-        return Base64.encodeBase64String(jsonSerialized.toString().getBytes());
+    private static String serialize(DiscoveryInformation discInfo) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos) ;
+        oos.writeObject(discInfo);
+        oos.flush();
+        return Base64.encodeBase64String(baos.toByteArray());
     }
 
-    public static DiscoveryInformation deserializeDiscoveryInfo(String serializedObj) throws ServletException,
-            IOException, ServiceException {
-        String jsonString = new String(Base64.decodeBase64(serializedObj));
-        ZimbraLog.extensions.debug("Deserializing open id %s", jsonString);
+    private static DiscoveryInformation deserializeDiscoveryInfo(String serializedObj)
+            throws ServletException, IOException {
+        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(Base64.decodeBase64(serializedObj)));
         try {
-            JSONObject jsonSerialized = new JSONObject(jsonString);
-            Identifier claimedID = null;
-            if (jsonSerialized.has("claimedID")) {
-                JSONObject claimedIDJSON = jsonSerialized.getJSONObject("claimedID");
-                String idType = claimedIDJSON.getString("idType");
-                if ("URL".equalsIgnoreCase(idType)) {
-                    String identifier = claimedIDJSON.getString("identifier");
-                    claimedID = new UrlIdentifier(identifier);
-                } else if ("XRI".equalsIgnoreCase(idType)) {
-                    String identifier = claimedIDJSON.getString("identifier");
-                    String iriNormalForm = claimedIDJSON.getString("iriNormalForm");
-                    String uriNormalForm = claimedIDJSON.getString("uriNormalForm");
-                    claimedID = new XriIdentifier(identifier, iriNormalForm, uriNormalForm);
-                } else {
-                    throw ServiceException
-                            .INVALID_REQUEST("Failed to deserialize cookie. Wrong idType " + idType, null);
-                }
-            }
-
-            String opEndpointString = jsonSerialized.getString("opEndpoint");
-            boolean hasDelegateIdentifier = jsonSerialized.getBoolean("hasDelegateIdentifier");
-            String delegateIdentifier = null;
-            if (hasDelegateIdentifier) {
-                delegateIdentifier = jsonSerialized.getString("delegateIdentifier");
-            }
-            String version = jsonSerialized.getString("version");
-            JSONArray discoveryTypesJSON = jsonSerialized.getJSONArray("discoveryTypes");
-            int numTypes = discoveryTypesJSON.length();
-            Set discoveryTypes = new HashSet();
-            for (int i = 0; i < numTypes; i++) {
-                discoveryTypes.add(discoveryTypesJSON.get(i));
-            }
-            DiscoveryInformation info = new DiscoveryInformation(new URL(opEndpointString), claimedID,
-                    delegateIdentifier, version, discoveryTypes);
-            return info;
-        } catch (JSONException | DiscoveryException e) {
-            ZimbraLog.extensions.error("Failed to deserialize cookie %s", e.getMessage(), e);
-            throw ServiceException.FAILURE(null, e);
+            return (DiscoveryInformation) ois.readObject();
+        } catch (ClassNotFoundException e) {
+            ZimbraLog.extensions.error("Error in deserializing DiscoveryInformation", e);
+            throw new ServletException(e.getMessage());
         }
     }
 }

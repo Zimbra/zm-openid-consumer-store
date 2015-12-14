@@ -2,11 +2,11 @@
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Server
  * Copyright (C) 2011, 2013, 2014 Zimbra, Inc.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software Foundation,
  * version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
@@ -16,18 +16,21 @@
  */
 package com.zimbra.cs.security.openid.consumer;
 
-import com.zimbra.common.util.memcached.ZimbraMemcachedClient;
-import com.zimbra.cs.memcached.MemcachedConnector;
+import java.util.Date;
+
 import org.openid4java.consumer.AbstractNonceVerifier;
 
-import java.util.Date;
+import com.zimbra.common.service.ServiceException;
+import com.zimbra.common.util.ZimbraLog;
+import com.zimbra.common.util.memcached.ZimbraMemcachedClient;
+import com.zimbra.cs.util.Zimbra;
 
 /**
  */
 public class MemcachedNonceVerifier extends AbstractNonceVerifier {
 
     private static final String KEY_PREFIX = "zmOpenidConsumerNonce:";
-    private static ZimbraMemcachedClient memcachedClient = MemcachedConnector.getClient();
+    private ZimbraMemcachedClient memcachedClient = Zimbra.getAppContext().getBean(ZimbraMemcachedClient.class);
 
     public MemcachedNonceVerifier(int maxAgeSecs) {
         super(maxAgeSecs);
@@ -41,9 +44,13 @@ public class MemcachedNonceVerifier extends AbstractNonceVerifier {
      */
     @Override
     protected int seen(Date now, String opUrl, String nonce) {
-        if (opUrl.equals(memcachedClient.get(KEY_PREFIX + nonce)))
-            return SEEN;
-        memcachedClient.put(KEY_PREFIX + nonce, opUrl, false);
+        try {
+            if (opUrl.equals(memcachedClient.get(KEY_PREFIX + nonce)))
+                return SEEN;
+            memcachedClient.put(KEY_PREFIX + nonce, opUrl, false);
+        } catch (ServiceException e) {
+            ZimbraLog.misc.warn(e.getLocalizedMessage(), e);
+        }
         return OK;
     }
 }
