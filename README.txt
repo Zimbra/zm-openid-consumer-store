@@ -5,7 +5,7 @@
 - Copy "openidconsumer.jar" to /opt/zimbra/lib/ext/openidconsumer directory
 
 
-- Copy "openid4java-0.9.5.jar" to /opt/zimbra/jetty/common/lib directory
+- Copy "openid4java-1.0.0.jar" to /opt/zimbra/jetty/common/lib directory
 
 
 - Copy "formredirection.jsp" file to /opt/zimbra/jetty/webapps/zimbra/public directory
