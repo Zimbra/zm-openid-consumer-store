@@ -24,6 +24,10 @@ import com.zimbra.cs.extension.ZimbraExtension;
  */
 public class OpenIDConsumerExtension implements ZimbraExtension {
 
+    public OpenIDConsumerExtension() {
+        // TODO Auto-generated constructor stub
+    }
+
     /**
      * Defines a name for the extension. It must be an identifier.
      *
