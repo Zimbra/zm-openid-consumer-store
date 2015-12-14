@@ -94,8 +94,9 @@ public class OpenIDConsumerHandler extends ExtensionHttpHandler {
 
     private static void configureHttpProxy() throws ServiceException {
         String url = Provisioning.getInstance().getLocalServer().getAttr(Provisioning.A_zimbraHttpProxyURL, null);
-        if (url == null)
+        if (url == null) {
             return;
+        }
 
         ProxyProperties proxyProps = new ProxyProperties();
         URI sProxyUri;
