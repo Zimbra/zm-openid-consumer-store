@@ -17,7 +17,7 @@
 
     e.g.
 
-      zmprov md <domain> +zimbraOpenidConsumerAllowedOPEndpointURL https://open.login.yahooapis.com/openid/op/auth
+      zmprov md <domain> +zimbraOpenidConsumerAllowedOPEndpointURL "http://www.livejournal.com/openid/server.bml"
 
 
 - If the zimbraOpenidConsumerStatelessModeEnabled server attribute is set to FALSE (TRUE by default), setup memcached
@@ -33,7 +33,7 @@
 
     e.g.
 
-      <zimbra_host_base_url>/service/extension/openid/consumer?openid_identifier=yahoo.com
+      <zimbra_host_base_url>/service/extension/openid/consumer?openid_identifier=grishick.livejournal.com
 
   You should end up with a "Success" page. Essentially, this step results in the "open id" being added to account's
   zimbraForeignPrincipal attribute.
