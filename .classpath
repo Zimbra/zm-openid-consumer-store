@@ -13,7 +13,7 @@
 	<classpathentry kind="lib" path="/ZimbraCommon/jars/bcprov-jdk15-146.jar"/>
 	<classpathentry kind="lib" path="/ZimbraCommon/jars/commons-cli-1.2.jar"/>
 	<classpathentry kind="lib" path="/ZimbraCommon/jars/commons-codec-1.7.jar"/>
-	<classpathentry kind="lib" path="/ZimbraCommon/jars/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="/ZimbraCommon/jars/commons-collections-3.2.2.jar"/>
 	<classpathentry kind="lib" path="/ZimbraCommon/jars/commons-csv-1.2.jar"/>
 	<classpathentry kind="lib" path="/ZimbraCommon/jars/commons-dbcp-1.4.jar"/>
 	<classpathentry kind="lib" path="/ZimbraCommon/jars/commons-fileupload-1.2.2.jar"/>
