@@ -2,7 +2,6 @@
   <import file="../zm-zcs/ant-global.xml" />
   <property name="ext.name" value="openidconsumer"/>
   <property name="jar.file" value="${ext.name}.jar"/>
-  <property name="jar.file" value="${ext.name}.jar"/>
 
   <!-- These two properties are used by zimbra-jar target to create jar manifest -->
   <property name="implementation.title" value="${ext.name}"/>
@@ -23,11 +22,4 @@
 
   <target name="jar" depends="compile,zimbra-jar" description="Creates the jar file" />
 
-  <target name="clean" description="Removes build dir">
-    <delete dir="${build.dir}" />
-    <delete dir="${build.classes.dir}"/>
-    <delete dir="${dist.dir}"/>
-    <delete dir="${dist.lib.dir}"/>
-    <delete dir="${dist.lib.ext.dir}"/>
-  </target>
 </project>
