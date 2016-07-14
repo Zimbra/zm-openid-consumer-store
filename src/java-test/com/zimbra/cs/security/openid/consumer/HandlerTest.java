@@ -14,7 +14,7 @@ import org.openid4java.discovery.DiscoveryInformation;
 import org.openid4java.discovery.UrlIdentifier;
 import org.openid4java.discovery.XriIdentifier;
 
-public class TestHandler {
+public class HandlerTest {
 
     /*
      * Example of serialized open ID for Yahoo.com {"discoveryTypes":[
