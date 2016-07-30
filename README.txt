@@ -1,7 +1,7 @@
 
 - Create "openidconsumer" directory under /opt/zimbra/lib/ext
 
-- Copy "openidconsumer.jar" to /opt/zimbra/lib/ext/openidconsumer directory
+- Copy "zm-openid-consumer-store-*.jar" to /opt/zimbra/lib/ext/openidconsumer directory
 
 - Copy openid4java-1.0.0.jar and guice-2.0.jar to /opt/zimbra/jetty/common/lib directory
 
