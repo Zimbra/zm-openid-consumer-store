@@ -16,5 +16,6 @@
   <dependency org="servlet-api" name="servlet-api" rev="3.1" />
   <dependency org="zimbracommon" name="zimbracommon" rev="1.0" />
   <dependency org="zimbrastore" name="zimbrastore" rev="1.0" />
+  <dependency org="zimbraclient" name="zimbrasoap" rev="1.0" /> 
  </dependencies>
 </ivy-module>
