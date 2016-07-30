@@ -1,7 +1,6 @@
-<project name="ZimbraOpenIDConsumerStore" default="jar">
+<project name="zm-openid-consumer-store" default="jar">
   <import file="../zm-zcs/ant-global.xml" />
   <property name="ext.name" value="openidconsumer"/>
-  <property name="jar.file" value="${ext.name}.jar"/>
 
   <!-- These two properties are used by zimbra-jar target to create jar manifest -->
   <property name="implementation.title" value="${ext.name}"/>
