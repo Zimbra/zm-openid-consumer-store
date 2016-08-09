@@ -2,7 +2,7 @@
   <import file="../zm-zcs/ant-global.xml" />
   <property name="ext.name" value="openidconsumer"/>
   <property name="extension.deploy.dir" location="${zimbra.home.dir}/lib/ext/${ext.name}"/>
-
+  <property name="openid.dist.dir" location="${dist.dir}/extensions-extra/openidconsumer"/>
   <!-- These two properties are used by zimbra-jar target to create jar manifest -->
   <property name="implementation.title" value="${ext.name}"/>
   <property name="zimbra.extension.class" value="com.zimbra.cs.security.openid.consumer.OpenIDConsumerExtension"/>
@@ -10,14 +10,13 @@
   <target name="build-init">
     <mkdir dir="${build.classes.dir}"/>
     <mkdir dir="${dist.dir}"/>
-    <mkdir dir="${dist.lib.dir}"/>
-    <mkdir dir="${dist.lib.ext.dir}"/>
+    <mkdir dir="${openid.dist.dir}"/>
   </target>
 
   <target name="dist" depends="jar" description="Copies jar to dist dir">
-    <copy todir="${dist.lib.ext.dir}">
-      <fileset dir="${build.dir}" includes="*.jar" />
-    </copy>
+	<copy file="formredirection.jsp" todir="${openid.dist.dir}"/>
+	<copy file="README.txt" todir="${openid.dist.dir}"/>
+	<copy file="${build.dir}/${jar.file}" todir="${openid.dist.dir}"/>
   </target>
 
   <target name="jar" depends="compile,zimbra-jar" description="Creates the jar file" />
