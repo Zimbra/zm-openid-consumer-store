@@ -2,7 +2,7 @@
 <ivy-module version="2.0"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
- <info organisation="com.zimbra" module="zm-openid-consumer-store" status="release">
+ <info organisation="zimbra" module="zm-openid-consumer-store" status="release">
  </info>
  <dependencies>
   <dependency org="org.json" name="json" rev="20090211" />
@@ -14,7 +14,9 @@
   <dependency org="org.openid4java" name="openid4java" rev="1.0.0"/>
   <dependency org="junit" name="junit" rev="4.8.2" />
   <dependency org="servlet-api" name="servlet-api" rev="3.1" />
-  <dependency org="zimbracommon" name="zimbracommon" rev="1.0" />
-  <dependency org="zimbrastore" name="zimbrastore" rev="1.0" />
+  <dependency org="zimbra" name="zm-common" rev="latest.integration" />
+  <dependency org="zimbra" name="zm-store" rev="latest.integration"/>
+  <dependency org="zimbra" name="zm-soap" rev="latest.integration" /> 
+  <dependency org="zimbra" name="zm-client" rev="latest.integration" /> 
  </dependencies>
 </ivy-module>
