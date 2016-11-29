@@ -1,42 +1,54 @@
 <project name="zm-openid-consumer-store" default="jar" xmlns:ivy="antlib:org.apache.ivy.ant">
-  <import file="../zm-zcs/ant-global.xml" />
-  <property name="ext.name" value="openidconsumer"/>
-  <property name="extension.deploy.dir" location="${zimbra.home.dir}/lib/ext/${ext.name}"/>
-  <property name="openid.dist.dir" location="${dist.dir}/extensions-extra/openidconsumer"/>
-  <!-- These two properties are used by zimbra-jar target to create jar manifest -->
-  <property name="implementation.title" value="${ext.name}"/>
-  <property name="zimbra.extension.class" value="com.zimbra.cs.security.openid.consumer.OpenIDConsumerExtension"/>
+	<import file="../zm-zcs/ant-global.xml" />
+	<property name="ext.name" value="openidconsumer"/>
+	<property name="extension.deploy.dir" location="${zimbra.home.dir}/lib/ext/${ext.name}"/>
+	<property name="openid.dist.dir" location="${dist.dir}/extensions-extra/openidconsumer"/>
+	<!-- These two properties are used by zimbra-jar target to create jar manifest -->
+	<property name="implementation.title" value="${ext.name}"/>
+	<property name="zimbra.extension.class" value="com.zimbra.cs.security.openid.consumer.OpenIDConsumerExtension"/>
 
-  <target name="build-init">
-    <mkdir dir="${build.classes.dir}"/>
-    <mkdir dir="${dist.dir}"/>
-    <mkdir dir="${openid.dist.dir}"/>
-  </target>
+	<target name="build-init">
+		<mkdir dir="${build.classes.dir}"/>
+		<mkdir dir="${dist.dir}"/>
+		<mkdir dir="${openid.dist.dir}"/>
+	</target>
 
-  <target name="dist" depends="jar" description="Copies jar to dist dir">
-	<copy file="formredirection.jsp" todir="${openid.dist.dir}"/>
-	<copy file="README.txt" todir="${openid.dist.dir}"/>
-	<copy file="${build.dir}/${jar.file}" todir="${openid.dist.dir}"/>
-  </target>
+	<target name="dist" depends="jar" description="Copies jar to dist dir">
+		<copy file="formredirection.jsp" todir="${openid.dist.dir}"/>
+		<copy file="README.txt" todir="${openid.dist.dir}"/>
+		<copy file="${build.dir}/${jar.file}" todir="${openid.dist.dir}"/>
+	</target>
 
-  <target name="jar" depends="compile,zimbra-jar" description="Creates the jar file" />
+	<target name="jar" depends="compile,zimbra-jar" description="Creates the jar file" />
+	<target name="dist-package" depends="jar" description="Populate directories">
+		<ivy:install organisation="org.openid4java" module="openid4java" revision="1.0.0" settingsRef="dev.settings" from="chain-resolver" to="build-dist" overwrite="true" transitive="false" type="jar"/>
+		<copy file="formredirection.jsp" todir="${dist.dir}" />
+		<copy file="README.txt" todir="${dist.dir}" />
+		<copy file="${build.dir}/${jar.file}" todir="${dist.dir}" />
+		<delete>
+			<fileset dir="${dist.dir}" includes="*.xml*" />
+			<fileset dir="${dist.dir}" includes="*.jar.*" />
+		</delete>
 
-  <target name="deploy" depends="jar">
-    <ivy:install organisation="org.openid4java" module="openid4java" revision="1.0.0" settingsRef="dev.settings" from="chain-resolver" to="build-tmp" overwrite="true" transitive="true" type="jar"/>
-    <ivy:install organisation="com.google.inject" module="guice" revision="2.0" settingsRef="dev.settings" from="chain-resolver" to="build-tmp" overwrite="true" transitive="true" type="jar"/>
-    <ant dir="${server.dir}" target="stop-webserver" inheritAll="false"/>
-    <copy todir="${extension.deploy.dir}">
-      <fileset dir="${build.dir}" includes="${jar.file}" />
-      <fileset dir="${build.tmp.dir}" includes="*.jar" />
-    </copy>
-	<copy file="formredirection.jsp" todir="${jetty.webapps.dir}/zimbra/public"/>
-    <ant dir="${server.dir}" target="start-webserver" inheritAll="false"/>
-  </target>
 
-  <target name="undeploy" depends="jar">
-    <ant dir="${server.dir}" target="stop-webserver" inheritAll="false"/>
-    <delete dir="${extension.deploy.dir}"/>
-    <delete file="${jetty.webapps.dir}/zimbra/public/formredirection.jsp"/>
-    <ant dir="${server.dir}" target="start-webserver" inheritAll="false"/>
-  </target>
+	</target>
+
+	<target name="deploy" depends="jar">
+		<ivy:install organisation="org.openid4java" module="openid4java" revision="1.0.0" settingsRef="dev.settings" from="chain-resolver" to="build-tmp" overwrite="true" transitive="true" type="jar"/>
+		<ivy:install organisation="com.google.inject" module="guice" revision="2.0" settingsRef="dev.settings" from="chain-resolver" to="build-tmp" overwrite="true" transitive="true" type="jar"/>
+		<ant dir="${server.dir}" target="stop-webserver" inheritAll="false"/>
+		<copy todir="${extension.deploy.dir}">
+			<fileset dir="${build.dir}" includes="${jar.file}" />
+			<fileset dir="${build.tmp.dir}" includes="*.jar" />
+		</copy>
+		<copy file="formredirection.jsp" todir="${jetty.webapps.dir}/zimbra/public"/>
+		<ant dir="${server.dir}" target="start-webserver" inheritAll="false"/>
+	</target>
+
+	<target name="undeploy" depends="jar">
+		<ant dir="${server.dir}" target="stop-webserver" inheritAll="false"/>
+		<delete dir="${extension.deploy.dir}"/>
+		<delete file="${jetty.webapps.dir}/zimbra/public/formredirection.jsp"/>
+		<ant dir="${server.dir}" target="start-webserver" inheritAll="false"/>
+	</target>
 </project>
