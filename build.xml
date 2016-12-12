@@ -22,6 +22,7 @@
 	<target name="jar" depends="compile,zimbra-jar" description="Creates the jar file" />
 	<target name="dist-package" depends="jar" description="Populate directories">
 		<ivy:install organisation="org.openid4java" module="openid4java" revision="1.0.0" settingsRef="dev.settings" from="chain-resolver" to="build-dist" overwrite="true" transitive="false" type="jar"/>
+		<ivy:install organisation="com.google.inject" module="guice" revision="2.0" settingsRef="dev.settings" from="chain-resolver" to="build-dist" overwrite="true" transitive="true" type="jar"/>
 		<copy file="formredirection.jsp" todir="${dist.dir}" />
 		<copy file="README.txt" todir="${dist.dir}" />
 		<copy file="${build.dir}/${jar.file}" todir="${dist.dir}" />
