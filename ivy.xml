@@ -7,7 +7,7 @@
  <dependencies>
   <dependency org="org.json" name="json" rev="20090211" />
   <dependency org="commons-codec" name="commons-codec" rev="1.7" />
-  <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.5.8"/>
+  <dependency org="org.apache.httpcomponents" name="httpclient" rev="${httpclient.version}"/>
   <dependency org="log4j" name="log4j" rev="1.2.16" />
   <dependency org="com.google.inject" name="guice" rev="2.0"/>
   <dependency org="com.google.guava" name="guava" rev="23.0" />
