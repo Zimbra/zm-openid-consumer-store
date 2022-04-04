@@ -8,7 +8,8 @@
   <dependency org="org.json" name="json" rev="20090211" />
   <dependency org="commons-codec" name="commons-codec" rev="1.7" />
   <dependency org="org.apache.httpcomponents" name="httpclient" rev="${httpclient.version}"/>
-  <dependency org="log4j" name="log4j" rev="1.2.16" />
+  <dependency org="org.apache.logging.log4j" name="log4j-core" rev="${log4j.core.version}" />
+  <dependency org="org.apache.logging.log4j" name="log4j-api" rev="${log4j.api.version}" />
   <dependency org="com.google.inject" name="guice" rev="2.0"/>
   <dependency org="com.google.guava" name="guava" rev="${com.google.guava.version}" />
   <dependency org="org.openid4java" name="openid4java" rev="1.0.0"/>
